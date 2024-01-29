@@ -9,5 +9,5 @@ Here, you'll find a collection of my SwiftUI explorations and tinkering projects
 My take on iOs rubber band volume slider<br /><br />
 
 **Particles Burst** <br />
-Tried to recreate [prototype](https://x.com/alexwidua/status/1702356242713178411?s=20) by Alex Widua.Got pretty close, but it's still a bit rough.
+Tried to recreate [prototype](https://x.com/alexwidua/status/1702356242713178411?s=20) by Alex Widua. Got pretty close, but it's still a bit rough.
 
