@@ -13,3 +13,7 @@ Tried to recreate [prototype](https://x.com/alexwidua/status/1702356242713178411
 
 **Meatball** <br />
 CoreMotion Exercise<br /><br />
+
+**App Jiggling** <br />
+Tried to recreate iOs dock with all of its interactions and added horizontal scroll logic<br /><br />
+
