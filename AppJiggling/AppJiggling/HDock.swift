@@ -45,7 +45,7 @@ struct HDock: View {
                 
                 LazyVGrid(columns: rows, spacing: apps.count > 4 ? 19 : 0) {
                     
-                    ForEach(apps.indices, id: \.self) { index in
+                    ForEach(Array(zip(apps.indices, apps)), id: \.1) { (index, app) in
                         
                         Apps(
                             apps: $apps,
