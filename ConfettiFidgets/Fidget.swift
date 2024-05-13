@@ -38,11 +38,6 @@ struct Fidget: View {
         ZStack {
             
             
-            
-            
-            
-            //placeholder
-            
             if isDragged {
                 RoundedRectangle(cornerRadius: 20, style: /*@START_MENU_TOKEN@*/.continuous/*@END_MENU_TOKEN@*/)
                     .frame(width: 82, height: 82)
@@ -91,8 +86,8 @@ struct Fidget: View {
                     
                         .onChanged { gesture in
                             isDragged = true
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             self.confetti.positionConfetti = fidgetItem.anchor
-                            
                             
                             
                             withAnimation() {
@@ -102,9 +97,6 @@ struct Fidget: View {
                             floatingOffset = -2
                             fidgetItem.zIndex = Double.greatestFiniteMagnitude
                             location = gesture.location
-                            
-                            
-                            
                         }
                     
                     
@@ -113,6 +105,7 @@ struct Fidget: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 withAnimation(){
                                     showSpriteView = true
+                                    UINotificationFeedbackGenerator().notificationOccurred(.success)
                                     
                                 }
                             }
