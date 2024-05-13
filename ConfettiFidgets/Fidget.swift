@@ -22,15 +22,19 @@ struct Fidget: View {
     @State private var dragRotationAngle: Angle = .degrees(-360)
     @State private var scale = 0.0
     @State private var floatingOffset: Double = -1.5
+    @State private var feedbackTriggered = false
+    @State private var location: CGPoint = CGPoint(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2)
     
     @Binding var fidgetItem: FidgetItem
     @Binding var backgroundColor: BackgroundColor
     @Binding var showSpriteView: Bool
     @Binding var confetti: Confetti
     
+    let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
     
     
-    @State private var location: CGPoint = CGPoint(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2)
+    
+    
     
     
     var body: some View {
@@ -84,9 +88,16 @@ struct Fidget: View {
                     
                     DragGesture()
                     
+                    
                         .onChanged { gesture in
+                            
                             isDragged = true
-                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            
+                            if !feedbackTriggered {
+                                feedbackGenerator.impactOccurred()
+                                feedbackTriggered = true
+                            }
+                            
                             self.confetti.positionConfetti = fidgetItem.anchor
                             
                             
@@ -101,13 +112,12 @@ struct Fidget: View {
                     
                     
                         .onEnded { gesture in
-                            
+
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 withAnimation(){
                                     showSpriteView = true
-                                    UINotificationFeedbackGenerator().notificationOccurred(.success)
-                                    
                                 }
+                                feedbackGenerator.impactOccurred()
                             }
                             
                             withAnimation(.spring(response: 0.35, dampingFraction: 0.7)){
@@ -124,10 +134,11 @@ struct Fidget: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 withAnimation(){
                                     showSpriteView = false
+                                    
                                 }
                             }
                             
-                            
+
                             //background circle color change
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                                 
@@ -146,6 +157,8 @@ struct Fidget: View {
                                     }
                                     
                                     fidgetItem.zIndex = 0
+                                    
+                                    feedbackTriggered = false
                                 }
                             }
                         }
