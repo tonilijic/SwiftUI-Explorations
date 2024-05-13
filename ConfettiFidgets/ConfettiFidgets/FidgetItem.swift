@@ -18,6 +18,7 @@ struct FidgetItem: Identifiable {
     let transitionOffset : CGSize
     var zIndex: Double = 0.0
     var introRotation : Angle
+    var anchor: CGPoint
 }
 
 

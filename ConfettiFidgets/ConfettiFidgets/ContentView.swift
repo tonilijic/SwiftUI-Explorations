@@ -13,6 +13,7 @@ struct ContentView: View {
     
     @State private var showIcons = false
     @State private var showCircle = false
+    @State private var confetti = Confetti()
     @State private var backgroundColor: BackgroundColor = .sketch
     @State private var fidgetItems: [FidgetItem] = [
         
@@ -24,7 +25,8 @@ struct ContentView: View {
             rotationDegrees: .degrees(8),
             offset: CGSize(width: 80, height: -90),
             transitionOffset: CGSize(width: 60, height: -100),
-            introRotation: .degrees(220)
+            introRotation: .degrees(220),
+            anchor: CGPoint(x: 80, y: 90)
           
         ),
         
@@ -36,7 +38,8 @@ struct ContentView: View {
             rotationDegrees: .degrees(8),
             offset: CGSize(width: -85, height: 0),
             transitionOffset: CGSize(width: -80, height: 0),
-            introRotation: .degrees(-220)
+            introRotation: .degrees(-220),
+            anchor: CGPoint(x: -85, y: 0)
         
         ),
         
@@ -47,11 +50,12 @@ struct ContentView: View {
             rotationDegrees: .degrees(-12),
             offset: CGSize(width: 60, height: 70),
             transitionOffset: CGSize(width: 80, height: 70),
-            introRotation: .degrees(220)
+            introRotation: .degrees(220),
+            anchor: CGPoint(x: 60, y: -70)
        
         )
     ]
-    
+    @State private var showSpriteView = false
     
     var body: some View {
         
@@ -87,7 +91,7 @@ struct ContentView: View {
             ZStack {
                 
                 ForEach($fidgetItems) { $fidgetItem in
-                    Fidget(fidgetItem: $fidgetItem, backgroundColor: $backgroundColor)
+                    Fidget(fidgetItem: $fidgetItem, backgroundColor: $backgroundColor, showSpriteView: $showSpriteView, confetti: $confetti)
                         .rotationEffect(showIcons ? fidgetItem.rotationDegrees : fidgetItem.introRotation)
                         .offset(fidgetItem.offset)
                         .zIndex(fidgetItem.zIndex)
@@ -95,6 +99,7 @@ struct ContentView: View {
                         .opacity(showIcons ? 1 : 0)
                 }
             }
+            
             
             .onAppear {
                 
@@ -104,15 +109,20 @@ struct ContentView: View {
                 }
                 
                 // display bg circle
-                withAnimation(.easeIn(duration: 0.6).delay(0.2)) {
+                withAnimation(.easeIn(duration: 1).delay(0.4)) {
                     showCircle = true
                 }
             }
             
+            if showSpriteView {
+                withAnimation(.default) {
+                    SpriteView(scene: confetti, options: .allowsTransparency)
+                        .ignoresSafeArea()
+                }
+            }
             
             
         }
-        
         .background(.white)
         .ignoresSafeArea()
         

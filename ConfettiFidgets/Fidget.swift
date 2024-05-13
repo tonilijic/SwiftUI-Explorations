@@ -14,10 +14,10 @@ import SpriteKit
 
 struct Fidget: View {
     
-
+    
     // other variables
-
-    @State private var showSpriteView = false
+    
+    
     @State private var isDragged = false
     @State private var dragRotationAngle: Angle = .degrees(-360)
     @State private var scale = 0.0
@@ -25,8 +25,9 @@ struct Fidget: View {
     
     @Binding var fidgetItem: FidgetItem
     @Binding var backgroundColor: BackgroundColor
+    @Binding var showSpriteView: Bool
+    @Binding var confetti: Confetti
     
-   
     
     
     @State private var location: CGPoint = CGPoint(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2)
@@ -61,7 +62,7 @@ struct Fidget: View {
                 .shadow(color:.gray.opacity(0.25),radius: 6, x: 10, y: 12)
                 .rotationEffect(dragRotationAngle, anchor: .center)
                 .position(location)
-
+            
             
             //floating animation
                 .offset(x: 0, y: floatingOffset)
@@ -90,6 +91,9 @@ struct Fidget: View {
                     
                         .onChanged { gesture in
                             isDragged = true
+                            self.confetti.positionConfetti = fidgetItem.anchor
+                            
+                            
                             
                             withAnimation() {
                                 dragRotationAngle = .degrees(1100)
@@ -109,6 +113,7 @@ struct Fidget: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 withAnimation(){
                                     showSpriteView = true
+                                    
                                 }
                             }
                             
@@ -152,21 +157,6 @@ struct Fidget: View {
                             }
                         }
                 )
-               
-            if showSpriteView {
-                withAnimation(.default) {
-                    SpriteView(scene: Confetti(), options: .allowsTransparency)
-                        .ignoresSafeArea()
-                        .rotationEffect(-fidgetItem.rotationDegrees)
-//                      .offset(CGSize(width: -fidgetItem.offset.width, height: -fidgetItem.offset.height ))
-                       
-                    
-                        
-                }
-                   
-                
-            }
-            
         }
         
     }
@@ -179,28 +169,55 @@ struct Fidget: View {
 
 // SK Scene
 
-class Confetti: SKScene {
+class Confetti: SKScene, ObservableObject {
     
-    var fidgetItem = FidgetItem.self
-
-    override func didMove(to view: SKView) {
+    @Published var positionConfetti: CGPoint {
+        didSet {
+            updateConfettiPoisition()
+        }
+    }
+    
+    var emitterNode: SKEmitterNode!
+    
+    
+    init(positionConfetti: CGPoint = CGPoint(x: 0, y: 0)) {
+        self.positionConfetti = positionConfetti
+        super.init(size: UIScreen.main.bounds.size)
         
-        size = UIScreen.main.bounds.size
+        sceneDidLoad()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func sceneDidLoad() {
+        
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         scaleMode = .resizeFill
         backgroundColor = .clear
+        
+        
+        emitterNode = SKEmitterNode(fileNamed: "Confetti.sks")!
+        emitterNode.particleColorSequence = nil
+        emitterNode.particleColorBlendFactor = 1
+        emitterNode.particleAlphaRange = 1
+        emitterNode.particleColorRedRange = 10
+        emitterNode.particleColorBlueRange = 10
+        emitterNode.particleColorGreenRange = 10
+        emitterNode.particleSize = CGSize(width: 40, height: 20)
+    }
     
-        let particles = SKEmitterNode(fileNamed: "Confetti.sks")!
-       
-        particles.particleColorSequence = nil
-        particles.particleColorBlendFactor = 0.8
-        particles.particleAlphaRange = 0
-        particles.particleColorRedRange = 8
-        particles.particleColorBlueRange = 6
-        particles.particleColorGreenRange = 2
-        particles.particleSize = CGSize(width: 80, height: 20)
-       
-
-        addChild(particles)
+    
+    func updateConfettiPoisition() {
+        
+        removeAllChildren()
+        
+        emitterNode.particlePosition = positionConfetti
+        
+        addChild(emitterNode)
+        
+        sceneDidLoad()
+        
     }
 }
