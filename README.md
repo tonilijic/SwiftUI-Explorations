@@ -17,3 +17,4 @@ CoreMotion Exercise<br /><br />
 **App Jiggling** <br />
 Tried to recreate iOs dock with all of its interactions and added horizontal scroll logic<br /><br />
 
+On drag exercise - cloth grid

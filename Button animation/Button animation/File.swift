@@ -1,3 +1,5 @@
+//texh might invisible in dark mode
+
 import SwiftUI
 
 struct CorrectButton: View {
