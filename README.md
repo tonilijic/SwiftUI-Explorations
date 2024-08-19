@@ -1,6 +1,7 @@
 ## SwiftUI-Explorations ##
 
-Here, you'll find a collection of my SwiftUI explorations and tinkering projects. As I delve into SwiftUI, I'm sharing my learning journey and experiments in this space. Feel free to explore and learn along with me!<br /><br />
+Here, you’ll find a collection of my SwiftUI explorations and tinkering projects. As I delve into SwiftUI, I’m sharing my learning journey and experiments in this space. I also cover these topics in more detail in my blog post:
+https://www.toni.li/blog/swiftUI-experiments<br /><br />
 > [!NOTE]
 > As I'm in the learning process, please note that the code may not be fully prepared for production-level usage.<br />
 <br />
