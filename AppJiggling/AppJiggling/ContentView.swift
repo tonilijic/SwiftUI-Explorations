@@ -30,8 +30,9 @@ struct ContentView: View {
         }
         
         .background(
-            Image("wallpaper")
-                .resizable()
+//
+            Color.black
+                
         )
         .frame(height: .infinity)
         .ignoresSafeArea()

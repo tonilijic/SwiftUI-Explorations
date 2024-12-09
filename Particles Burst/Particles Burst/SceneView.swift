@@ -12,10 +12,34 @@ struct SceneView: View {
     @State var isBlended = false
     @State private var tappedPoint: CGPoint = .zero
     @State private var isDragging = false
+    @State private var startTime: Date? = nil
     
+
     
+    init() {
+        // Initialize with gold-like settings
+        _particles = State(initialValue: Particles(turbStrength: 10))
+        _particles.wrappedValue.particleColore = .orange
+        _particles.wrappedValue.emitterNode.particleColorSequence = nil
+       
+ 
+    }
     
-    
+    func calculateDynamicRadius(startTime: Date?) -> CGFloat {
+            guard let startTime = startTime else { return 0 }
+        
+        // Calculate drag duration
+        let dragDuration = abs(startTime.timeIntervalSinceNow)
+        
+        // Start with a small radius and increase over time
+        let startRadius: CGFloat = 4 // Very small initial radius
+        let maxRadius: CGFloat = 24   // Your original maximum radius
+        
+      
+        let radius = min(startRadius + CGFloat(dragDuration * 32), maxRadius)
+        
+        return radius
+    }
     
     //view
     
@@ -28,46 +52,64 @@ struct SceneView: View {
                 SpriteView(scene: particles, options: .allowsTransparency)
                     .ignoresSafeArea()
                     .overlay(
-                        LinearGradient(gradient: Gradient(colors: [.clear,.clear,.clear.opacity(0.2), .black.opacity(0.6), .black, .black]), startPoint: .top, endPoint: .bottom)
+                        LinearGradient(gradient: Gradient(colors: [.black,.black.opacity(0.8),.black.opacity(0.6), .clear,.clear,.black.opacity(0.25),.black.opacity(0.4), .black.opacity(0.45), .black.opacity(0.6), .black.opacity(0.65)]), startPoint: .top, endPoint: .bottom)
                             .blendMode(.darken)
+                    )
+                    .overlay(
+                        LinearGradient(gradient: Gradient(colors: [.clear,.clear, .black, .black, .black]), startPoint: .top, endPoint: .bottom)
+                            .blendMode(.overlay)
                     )
                     .gesture(
                         SpatialTapGesture()
-                            .onEnded { gesture in
-                                
-                                tappedPoint = CGPoint(x: gesture.location.x, y: gesture.location.y + 50)
-                                let convertedPoint = particles.convertPoint(fromView: tappedPoint)
-                                self.particles.gravity.position = convertedPoint
-                                self.particles.gravity.strength = -10
-                                
-                                Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
-                                    self.particles.gravity.strength = 0
-                                }
+                        .onEnded { gesture in
+                    
+                            self.particles.gravity.strength = 0
+                                    self.particles.gravity.region = SKRegion(radius: 20)
+                                    self.particles.gravity.position = .zero
+                            
+                            tappedPoint = CGPoint(x: gesture.location.x, y: gesture.location.y + 50)
+                            print("Converted Tap Point: \(tappedPoint)")
+                            
+                            let convertedPoint = particles.convertPoint(fromView: tappedPoint)
+                            print("Converted Scene Point: \(convertedPoint)")
+                            
+                            self.particles.gravity.position = convertedPoint
+                            self.particles.gravity.strength = -40
+                            
+                            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
+                                print("Resetting Gravity Strength")
+                                self.particles.gravity.strength = 0
                             }
+                        }
                     )
                     .gesture(
                         DragGesture(minimumDistance: 0)
                             .onChanged { gesture in
-                                withAnimation(.spring()) {
-                                    
+                                if startTime == nil {
+                                    startTime = Date()
+                                }
+                                
+                                withAnimation(.linear(duration: 0.1)) {
                                     tappedPoint = CGPoint(x: gesture.location.x, y: gesture.location.y + 50)
                                     let convertedPoint = particles.convertPoint(fromView: tappedPoint)
                                     self.particles.gravity.position = convertedPoint
-                                    self.particles.gravity.strength = -30
-                                    self.particles.gravity.region = SKRegion(radius: 26)
                                     
+                                    // Increase gravity strength for faster response
+                                    self.particles.gravity.strength = -80
                                     
+                                    // Faster radius calculation with higher multiplier
+                                    let dragRadius = calculateDynamicRadius(startTime: startTime)
+                                    self.particles.gravity.region = SKRegion(radius: Float(dragRadius))
                                 }
-                                withAnimation(.interactiveSpring()) {
+                                withAnimation(.spring(response: 0.1, dampingFraction: 0.2)) {
                                     isDragging = true
                                 }
-                                
                             }
                             .onEnded { _ in
-                                withAnimation(.spring()) {
+                                withAnimation(.spring(response: 0.1)) {
                                     isDragging = false
                                     self.particles.gravity.strength = 0
-                                    
+                                    startTime = nil
                                 }
                             }
                     )
@@ -77,18 +119,18 @@ struct SceneView: View {
                     
                     Spacer()
                     
-                    HStack(spacing: 24) {
+                    HStack(spacing: 40) {
                         
                         Circle()
                             .fill(Gradient(colors: [Color("GYellow"), Color("Gold")]))
-                            .frame(width: 30, height: 30)
+                            .frame(width: 32, height: 32)
                             .overlay(
                                 Circle()
-                                    .stroke(.white,lineWidth: isGold ? 2 : 0)
+                                    .stroke(.white,lineWidth: isGold ? 3 : 0)
                                     .frame(width: isGold ? 36 : 34, height: isGold ? 36 : 34)
                             )
                             .onTapGesture {
-                                withAnimation(.spring){
+                                withAnimation(.easeIn){
                                     isGold = true
                                     isSilver = false
                                     particles.turbStrength = 10
@@ -105,17 +147,17 @@ struct SceneView: View {
                         
                         Circle()
                             .fill(Gradient(colors: [Color(.white), Color("DarkGrey")]))
-                            .frame(width: 30, height: 30)
+                            .frame(width: 32, height: 32)
                             .overlay(
                                 Circle()
-                                    .stroke(.white,lineWidth: isSilver ? 2 : 0)
+                                    .stroke(.white,lineWidth: isSilver ? 3 : 0)
                                     .frame(width: isSilver ? 36 : 34, height: isSilver ? 36 : 34)
                             )
                             .onTapGesture {
-                                withAnimation(.spring){
+                                withAnimation(.easeIn){
                                     isGold = false
                                     isSilver = true
-                                    particles.turbStrength = 10
+                                    particles.turbStrength = 8
                                     particles.updateFieldTurbulence()
                                     
                                     Timer.scheduledTimer(withTimeInterval: 1.2, repeats: false) { _ in
@@ -124,7 +166,7 @@ struct SceneView: View {
                                         
                                     }
                                     
-                                    particles.particleColore = .blue
+                                    particles.particleColore = .black
                                 }
                             }
                     }
@@ -179,7 +221,7 @@ class Particles: SKScene, ObservableObject {
         self.turbStrength = turbStrength
         self.fieldPosition = .zero
         self.particleColore = .white
-        super.init(size: CGSize(width: 300, height: 300))
+        super.init(size: CGSize(width: 500, height: 500))
         
         sceneDidLoad()
     }
@@ -200,11 +242,11 @@ class Particles: SKScene, ObservableObject {
         
         emitterNode = SKEmitterNode(fileNamed: particleName)!
         emitterNode.particleColorSequence = nil
-        emitterNode.particleColorBlendFactor = 0.3;
+        emitterNode.particleColorBlendFactor = 0.5;
         emitterNode.particleColor = .orange
         emitterNode.particleSize = CGSize(width: 30, height: 30)
         emitterNode.position = CGPoint(x: frame.midX, y: frame.midY)
-        emitterNode.advanceSimulationTime(5)
+        emitterNode.advanceSimulationTime(0)
         
         addChild(emitterNode)
         
@@ -224,7 +266,7 @@ class Particles: SKScene, ObservableObject {
         gravity.falloff = -1
         gravity.strength = 0
         gravity.animationSpeed = 0.2
-        gravity.region = SKRegion(radius: 30)
+        gravity.region = SKRegion(radius: 10)
         
         addChild(gravity)
         
@@ -262,6 +304,8 @@ class Particles: SKScene, ObservableObject {
         turbStrength = 0
         updateFieldTurbulence()
     }
+    
+    
     
     
     

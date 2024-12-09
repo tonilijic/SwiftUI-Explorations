@@ -37,10 +37,11 @@ struct ContentView: View {
                 
                 SpriteView(scene: scene, options: .allowsTransparency)
                 
-                    .frame(width: 200, height: 200)
+                    .frame(width: 225, height: 225)
                     .shadow(color: isDragging ? .black.opacity(0.7) : .clear, radius: 8, x: 0, y: 0)
                     .scaleEffect(scale)
                     .position(location)
+                    
                 
                 //tap
                     .onTapGesture {
@@ -106,7 +107,7 @@ struct ContentView: View {
                     )
                 
                 
-                CustomTabBar()
+//                CustomTabBar()
             }
                 
         }
@@ -131,43 +132,43 @@ struct ContentView: View {
    
 
 
-//custom tab view
-@ViewBuilder
-func CustomTabBar() -> some View {
-    HStack() {
-       
-        
-        
-        Image(systemName: "repeat")
-            .font(.system(size: 28))
-            .foregroundColor(.black)
-
-        Spacer()
-        
-        Image(systemName: "heart")
-            .font(.system(size: 28))
-            .foregroundColor(.black)
-        
-        
-        Spacer()
-        
-        Image(systemName: "bookmark")
-            .font(.system(size: 28))
-            .foregroundColor(.black)
-    }
-            
-    .frame(maxWidth: .infinity)
-    .foregroundStyle(Color.primary )
-    .padding(.top, 17)
-    .padding(.horizontal, 40)
-    .background(.ultraThinMaterial)
-        .overlay (
-            Rectangle()
-            .frame(height: 1)
-            .foregroundColor(Color.black.opacity(0.1))
-            .padding(.top, -26)
-            )
-}
+////custom tab view
+//@ViewBuilder
+//func CustomTabBar() -> some View {
+//    HStack() {
+//       
+//        
+//        
+//        Image(systemName: "repeat")
+//            .font(.system(size: 32))
+//            .foregroundColor(.black)
+//
+//        Spacer()
+//        
+//        Image(systemName: "heart")
+//            .font(.system(size: 28))
+//            .foregroundColor(.black)
+//        
+//        
+//        Spacer()
+//        
+//        Image(systemName: "bookmark")
+//            .font(.system(size: 28))
+//            .foregroundColor(.black)
+//    }
+//            
+//    .frame(maxWidth: .infinity)
+//    .foregroundStyle(Color.primary )
+//    .padding(.top, 17)
+//    .padding(.horizontal, 40)
+//    .background(.ultraThinMaterial)
+//        .overlay (
+//            Rectangle()
+//            .frame(height: 1)
+//            .foregroundColor(Color.black.opacity(0.1))
+//            .padding(.top, -26)
+//            )
+//}
 
 
 //SpriteKit Scene
@@ -176,42 +177,85 @@ class FidgetSpinner: SKScene {
     var spriteNode: SKSpriteNode = SKSpriteNode(imageNamed: "pic")
     var startingPoint = CGPoint.zero
     
+    // Tracking full rotations
+    private var lastFullRotationAngle: CGFloat = 0
+    private var fullRotationCount: Int = 0
+    private let rotationThreshold: CGFloat = .pi * 2 // One full rotation
+    
+    // Haptic tracking
+    private var lastHapticTime: TimeInterval = 0
+    private let hapticCooldown: TimeInterval = 0.1
     
     override func didMove(to view: SKView) {
-        
-        
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         size = CGSize(width: 150, height: 150)
         scaleMode = .fill
         backgroundColor = .clear
-        
-        
-        //physics node
         
         spriteNode.size = CGSize(width: 125, height: 125)
         spriteNode.physicsBody = SKPhysicsBody(circleOfRadius: 120)
         addChild(spriteNode)
         
         spriteNode.physicsBody?.pinned = true
-        spriteNode.physicsBody?.angularDamping = 0.5
-        
+        spriteNode.physicsBody?.angularDamping = 1.5
+        spriteNode.physicsBody?.allowsRotation = true
     }
     
-   
+    override func update(_ currentTime: TimeInterval) {
+        guard let physicsBody = spriteNode.physicsBody else { return }
+        
+        // Current rotation and angular velocity
+        let currentZRotation = spriteNode.zRotation
+        let angularVelocity = physicsBody.angularVelocity
+        
+        // Check for full rotations
+        checkFullRotation(currentTime, currentZRotation)
+        
+        // Stabilization logic
+        let uprightThreshold: CGFloat = 0.3
+        let stabilizationStrength: CGFloat = 2.0
+        
+        if abs(currentZRotation) > uprightThreshold || abs(angularVelocity) > 0.5 {
+            let stabilizationTorque = -currentZRotation * stabilizationStrength
+                - (angularVelocity * 0.5)
+            
+            physicsBody.applyTorque(stabilizationTorque)
+        }
+    }
+    
+    private func checkFullRotation(_ currentTime: TimeInterval, _ currentRotation: CGFloat) {
+        // Calculate the change in rotation
+        let rotationDelta = abs(currentRotation - lastFullRotationAngle)
+        
+        // Check if a full rotation has occurred
+        if rotationDelta >= rotationThreshold {
+            // Trigger haptic feedback if enough time has passed
+            if currentTime - lastHapticTime >= hapticCooldown {
+                // Trigger light intensity haptic
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.prepare()
+                generator.impactOccurred(intensity: 1.0)
+                
+                // Update tracking variables
+                lastFullRotationAngle = currentRotation
+                fullRotationCount += 1
+                lastHapticTime = currentTime
+                
+                // Optional: You can add multiple haptics or log rotation count
+                print("Full rotation count: \(fullRotationCount)")
+            }
+        }
+    }
     
     func updateAngularImpulse(_ gesture: DragGesture.Value) {
-        
         var location = gesture.location
     
         let dx = location.x - spriteNode.position.x
         let dy = location.y - spriteNode.position.y
         
         startingPoint = CGPoint(x: dx, y: dy)
-        print("text \(spriteNode.position)")
 
-        
         if gesture.translation != .zero {
-            var location = gesture.location
             location = self.convertPoint(fromView: location)
             var dx = location.x - spriteNode.position.x
             var dy = location.y - spriteNode.position.y
@@ -222,18 +266,11 @@ class FidgetSpinner: SKScene {
             dx = gesture.velocity.width
             dy = gesture.velocity.height
             
-            // Determine how fast to spin the node. Optionally, scale the speed
+            // Determine how fast to spin the node
             let speed = sqrt(dx * dx + dy * dy) * 0.002
             
             // Apply angular impulse
             spriteNode.physicsBody?.applyAngularImpulse(speed * direction)
-            
         }
-        
     }
-     
 }
-
-
-
-

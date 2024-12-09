@@ -7,13 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E21B98B42B4EFE1600CBF7B5 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = E21B98B32B4EFE1600CBF7B5 /* MyParticle.sks */; };
+		423017C92D0490A400129973 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 423017C82D0490A400129973 /* Assets.xcassets */; };
+		423017CC2D04922000129973 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 423017CA2D04922000129973 /* Assets.xcassets */; };
+		423017CD2D04922000129973 /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 423017CB2D04922000129973 /* MyParticle.sks */; };
 		E25B32802B4C974B0064A7B5 /* LastBurstTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B327F2B4C974B0064A7B5 /* LastBurstTest.swift */; };
 		E25B32922B4C984C0064A7B5 /* SceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B32912B4C984C0064A7B5 /* SceneView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E21B98B32B4EFE1600CBF7B5 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyParticle.sks; sourceTree = "<group>"; };
+		423017C82D0490A400129973 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		423017CA2D04922000129973 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		423017CB2D04922000129973 /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyParticle.sks; sourceTree = "<group>"; };
 		E25B327C2B4C974B0064A7B5 /* LastBurstTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastBurstTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E25B327F2B4C974B0064A7B5 /* LastBurstTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastBurstTest.swift; sourceTree = "<group>"; };
 		E25B32912B4C984C0064A7B5 /* SceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneView.swift; sourceTree = "<group>"; };
@@ -33,7 +37,8 @@
 		E21B98B52B4F001400CBF7B5 /* Particles */ = {
 			isa = PBXGroup;
 			children = (
-				E21B98B32B4EFE1600CBF7B5 /* MyParticle.sks */,
+				423017CA2D04922000129973 /* Assets.xcassets */,
+				423017CB2D04922000129973 /* MyParticle.sks */,
 			);
 			path = Particles;
 			sourceTree = "<group>";
@@ -59,6 +64,7 @@
 			children = (
 				E25B327F2B4C974B0064A7B5 /* LastBurstTest.swift */,
 				E25B32912B4C984C0064A7B5 /* SceneView.swift */,
+				423017C82D0490A400129973 /* Assets.xcassets */,
 				E21B98B52B4F001400CBF7B5 /* Particles */,
 			);
 			name = ParticlesBurst;
@@ -123,7 +129,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E21B98B42B4EFE1600CBF7B5 /* MyParticle.sks in Resources */,
+				423017C92D0490A400129973 /* Assets.xcassets in Resources */,
+				423017CC2D04922000129973 /* Assets.xcassets in Resources */,
+				423017CD2D04922000129973 /* MyParticle.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
