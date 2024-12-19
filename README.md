@@ -25,5 +25,5 @@ Here, you’ll find a collection of my swiftUI prototypes. As I delve into Swift
 <br /><br />
 
 > [!NOTE]
-> As I'm in the learning process, please note that the code may not be fully prepared for production-level usage.<br />
+> As I am currently in the learning process and exploring out of pure joy and curiosity, please note that the code may not yet be fully optimized for production-level usage.<br />
 <br />
