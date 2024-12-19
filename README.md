@@ -1,7 +1,7 @@
 ## SwiftUI-Explorations ##
 
 Here, you’ll find a collection of my swiftUI prototypes. As I delve into SwiftUI, I’m sharing my learning journey and experiments in this space. I also cover these topics in more detail in my blog post:
-https://www.toni.li/blog/swiftUI-experiments<br /><br />
+https://www.toni.li/blog/swiftui-explorations)<br /><br />
 > [!NOTE]
 > As I'm in the learning process, please note that the code may not be fully prepared for production-level usage.<br />
 <br />
@@ -43,7 +43,7 @@ Dynamic cloth like grid<br />
 [13. Paging Indicators ](https://github.com/tonilijic/SwiftUI-Explorations/tree/main/Paging%20Indicators)<br />
 
 [14. Particles Burst](https://github.com/tonilijic/SwiftUI-Explorations/tree/main/Particles%20Burst) <br />
-Tried to recreate [prototype](https://x.com/alexwidua/status/1702356242713178411?s=20) by Alex Widua. Got pretty close, but it's still a bit rough.<br />
+Tried to recreate [prototype](https://x.com/alexwidua/status/1702356242713178411?s=20) by Alex Widua.<br />
 
 [15.Spinner](https://github.com/tonilijic/SwiftUI-Explorations/tree/main/Spinner1) <br />
 
